@@ -27,14 +27,9 @@ class LibmodbusConan(ConanFile):
         with tools.chdir(self._source_subfolder):
             self.run("bash autogen.sh")
             autotools = AutoToolsBuildEnvironment(self)
-            autotools.configure()
+            autotools.configure(args=["--without-documentation"])
             autotools.make()
-
-    def package(self):
-        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
-        self.copy("*.h", dst="include", src=os.path.join(self._source_subfolder, "include"))
-        self.copy("*.so", dst="lib", keep_path=False)
-        self.copy("*.a", dst="lib", keep_path=False)
+            autotools.install()
 
     def package_info(self):
         self.cpp_info.libs = ["modbus"]
