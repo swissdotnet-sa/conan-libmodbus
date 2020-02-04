@@ -14,6 +14,8 @@ class LibmodbusConan(ConanFile):
     homepage = "https://github.com/stephane/libmodbus"
     author = "Simon Lepasteur <slepasteur@gmail.com>"
     license = "LGPL-2.1"
+    options = {"shared": [True, False]}
+    default_options = {"shared": False}
     exports = ["LICENSE.md"]
     _source_subfolder = "source_subfolder"
 
@@ -27,7 +29,10 @@ class LibmodbusConan(ConanFile):
         with tools.chdir(self._source_subfolder):
             self.run("bash autogen.sh")
             autotools = AutoToolsBuildEnvironment(self)
-            autotools.configure(args=["--without-documentation"])
+            if self.options.shared:
+                autotools.configure(args=["--without-documentation"])
+            else:
+                autotools.configure(args=["--without-documentation", "--disable-shared"])
             autotools.make()
             autotools.install()
 
